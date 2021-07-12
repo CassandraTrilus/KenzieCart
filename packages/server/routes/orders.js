@@ -33,7 +33,10 @@ router
       /* create new order using Order model
         and return order ID
       */
-      res.json(orderData)
+      const savedOrder = await new Order(orderData)
+      savedOrder.save()
+      res.json(savedOrder._id)
+
     } catch (error) {
       next(new Error('Error Placing Order'))
     }

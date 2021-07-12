@@ -129,6 +129,7 @@ export default function CheckoutForm({ placeOrder }) {
               className='custom-select d-block w-100'
               id='country'
               required
+              onChange={handleInputChange}
             >
               <option value=''>Choose...</option>
               <option>United States</option>
@@ -139,7 +140,7 @@ export default function CheckoutForm({ placeOrder }) {
           </div>
           <div className='col-md-4 mb-3'>
             <label htmlFor='state'>State</label>
-            <select className='custom-select d-block w-100' id='state' required>
+            <select className='custom-select d-block w-100' id='state' required onChange={handleInputChange}>
               <option value=''>Choose...</option>
               <option>California</option>
             </select>

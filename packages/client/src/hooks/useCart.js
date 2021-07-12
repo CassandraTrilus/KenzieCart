@@ -153,6 +153,7 @@ const useProvideCart = () => {
     removeAllItems,
     resetCart,
     isItemInCart,
+    calculateCartTotal,
   }
 }
 
