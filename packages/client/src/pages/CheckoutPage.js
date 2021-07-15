@@ -20,7 +20,7 @@ export default function CheckoutPage(props) {
     let orderData = {
       customerDetails: orderFormData,
       items: state.cart,
-      orderTotal: calculateCartTotal(),
+      orderTotal: calculateCartTotal(state.cart),
     }
     setData({
       ...data,
@@ -30,7 +30,7 @@ export default function CheckoutPage(props) {
     try {
       const orderConfirmation = await createOrder(orderData)
       console.log(orderConfirmation)
-      toast('Order Placed Successfully')
+      toast(`Order #${orderConfirmation.data} Placed Successfully`)
       resetCart()
       setData({
         isSubmitting: false,
