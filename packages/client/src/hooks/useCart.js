@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, createContext } from 'react'
+import React, { useReducer, useContext, createContext,useState, useEffect } from 'react'
 
 const initialState = {
   cart: [],
@@ -16,6 +16,7 @@ const calculateCartTotal = (cartItems) => {
 
 const reducer = (state, action) => {
   let nextCart = [...state.cart];
+  let nextState;
   switch (action.type) {
     case 'ADD_ITEM':
       const existingIndex = nextCart.findIndex(
@@ -23,8 +24,6 @@ const reducer = (state, action) => {
       )
 
       const numItemsToAdd = action.payload.quantity;
-
-      
 
       if (existingIndex >= 0) {
         const newQuantity = parseInt(
@@ -36,17 +35,21 @@ const reducer = (state, action) => {
           quantity: newQuantity,
         }
         
-
       } else {
         nextCart.push(action.payload)
       }
 
-      return {
+      nextState = {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount + numItemsToAdd,
         cartTotal: calculateCartTotal(nextCart)
       }
+
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      console.log(localStorage)
+      return nextState
+
     case 'REMOVE_ITEM':
       nextCart = nextCart
         .map((item) =>
@@ -56,21 +59,35 @@ const reducer = (state, action) => {
         )
         .filter((item) => item.quantity > 0);
 
-      return {
+      nextState = {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount > 0 ? state.itemCount - 1 : 0,
         cartTotal: calculateCartTotal(nextCart),
       }
+
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      return nextState
+
     case 'REMOVE_ALL_ITEMS':
       let quantity = state.cart.find((i) => i._id === action.payload).quantity
-      return {
+      
+      nextState = {
         ...state,
         cart: state.cart.filter((item) => item._id !== action.payload),
         itemCount: state.itemCount > 0 ? state.itemCount - quantity : 0,
       }
+
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      return nextState
+
     case 'RESET_CART':
+      localStorage.setItem('KenzieCart', JSON.stringify(initialState))
       return { ...initialState }
+
+    case 'INIT SAVED CART':
+      return { ...action.payload }
+
     default:
       return state
   }
@@ -103,48 +120,59 @@ export const useCart = () => {
 // Provider hook that creates cart object and handles state
 const useProvideCart = () => {
   const { state, dispatch } = useCart()
+  const [ isLoading, setIsLoading ] = useState(false)
 
   const addItem = (item) => {
+    setIsLoading(true)
     dispatch({
       type: 'ADD_ITEM',
       payload: item,
     })
+    setIsLoading(false)
   }
 
   const removeItem = (id) => {
+    setIsLoading(true)
     dispatch({
       type: 'REMOVE_ITEM',
       payload: id,
     })
+    setIsLoading(false)
   }
 
   const removeAllItems = (id) => {
+    setIsLoading(true)
     dispatch({
       type: 'REMOVE_ALL_ITEMS',
       payload: id,
     })
+    setIsLoading(false)
   }
 
   const resetCart = () => {
+    setIsLoading(true)
     dispatch({
       type: 'RESET_CART',
     })
+    setIsLoading(false)
   }
 
   const isItemInCart = (id) => {
     return !!state.cart.find((item) => item._id === id)
   }
 
-  /*  Check for saved local cart on load and dispatch to set initial state
+  // Check for saved local cart on load and dispatch to set initial state
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('KenzieCart')) || false
     if (savedCart) {
+      setIsLoading(true)
       dispatch({
         type: 'INIT_SAVED_CART',
         payload: savedCart,
       })
+      setIsLoading(false)
     }
-  }, [dispatch]) */
+  }, [dispatch])
 
   return {
     state,
