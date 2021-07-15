@@ -16,6 +16,7 @@ const calculateCartTotal = (cartItems) => {
 
 const reducer = (state, action) => {
   let nextCart = [...state.cart];
+  let nextState;
   switch (action.type) {
     case 'ADD_ITEM':
       const existingIndex = nextCart.findIndex(
@@ -38,14 +39,15 @@ const reducer = (state, action) => {
         nextCart.push(action.payload)
       }
 
-      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
-
-      return {
+      nextState = {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount + numItemsToAdd,
         cartTotal: calculateCartTotal(nextCart)
       }
+
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      return nextState
 
     case 'REMOVE_ITEM':
       nextCart = nextCart
@@ -56,39 +58,34 @@ const reducer = (state, action) => {
         )
         .filter((item) => item.quantity > 0);
 
-      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
-
-      return {
+      nextState = {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount > 0 ? state.itemCount - 1 : 0,
         cartTotal: calculateCartTotal(nextCart),
       }
 
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      return nextState
+
     case 'REMOVE_ALL_ITEMS':
       let quantity = state.cart.find((i) => i._id === action.payload).quantity
-      
-      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
 
-      return {
+      nextState = {
         ...state,
         cart: state.cart.filter((item) => item._id !== action.payload),
         itemCount: state.itemCount > 0 ? state.itemCount - quantity : 0,
       }
 
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      return nextState
+
     case 'RESET_CART':
-      localStorage.removeItem('KenzieCart', JSON.stringify(nextCart))
+      localStorage.removeItem('KenzieCart', JSON.stringify(initialState))
       return { ...initialState }
 
-    case 'INIT SAVED CART':
-      nextCart = action.payload
-      let nextItemCount = nextCart.length
-      return { 
-          ...state,
-          cart: nextCart,
-          itemCount: nextItemCount, 
-          cartTotal: calculateCartTotal(nextCart),
-      }
+    case 'INIT_SAVED_CART':
+      return { ...action.payload }
 
     default:
       return state
@@ -157,7 +154,6 @@ const useProvideCart = () => {
   // Check for saved local cart on load and dispatch to set initial state
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('KenzieCart')) || false
-
     if (savedCart) {
       dispatch({
         type: 'INIT_SAVED_CART',
@@ -165,6 +161,10 @@ const useProvideCart = () => {
       })
     }
   }, [dispatch])
+
+    useEffect(() => {
+      console.log(state)
+    }, [state])
 
   return {
     state,

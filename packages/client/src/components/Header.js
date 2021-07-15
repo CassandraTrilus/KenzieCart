@@ -8,7 +8,7 @@ import CartSidebar from 'components/CartSidebar'
 export default function Header() {
   const { openSidebar } = useUI()
   const { state } = useProvideCart()
-  console.log(state.itemCount)
+
 
   return (
     <>
