@@ -24,6 +24,8 @@ const reducer = (state, action) => {
 
       const numItemsToAdd = action.payload.quantity;
 
+      
+
       if (existingIndex >= 0) {
         const newQuantity = parseInt(
           nextCart[existingIndex].quantity + numItemsToAdd
@@ -33,6 +35,8 @@ const reducer = (state, action) => {
           ...action.payload,
           quantity: newQuantity,
         }
+        
+
       } else {
         nextCart.push(action.payload)
       }
@@ -40,7 +44,8 @@ const reducer = (state, action) => {
       return {
         ...state,
         cart: nextCart,
-        itemCount: state.itemCount + 1,
+        itemCount: state.itemCount + numItemsToAdd,
+        cartTotal: calculateCartTotal(nextCart)
       }
     case 'REMOVE_ITEM':
       nextCart = nextCart
