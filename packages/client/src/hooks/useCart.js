@@ -4,6 +4,8 @@ const initialState = {
   cart: [],
   itemCount: 0,
   cartTotal: 0,
+  couponCode: '',
+  discount: 0
 }
 
 const calculateCartTotal = (cartItems) => {
@@ -16,7 +18,6 @@ const calculateCartTotal = (cartItems) => {
 
 const reducer = (state, action) => {
   let nextCart = [...state.cart];
-  let nextState;
   switch (action.type) {
     case 'ADD_ITEM':
       const existingIndex = nextCart.findIndex(
@@ -39,7 +40,9 @@ const reducer = (state, action) => {
         nextCart.push(action.payload)
       }
 
-      nextState = {
+      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
+
+      return {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount + numItemsToAdd,
@@ -58,18 +61,21 @@ const reducer = (state, action) => {
         )
         .filter((item) => item.quantity > 0);
 
-      nextState = {
+      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
+
+      return {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount > 0 ? state.itemCount - 1 : 0,
         cartTotal: calculateCartTotal(nextCart),
       }
 
-      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
-      return nextState
-
     case 'REMOVE_ALL_ITEMS':
       let quantity = state.cart.find((i) => i._id === action.payload).quantity
+      
+      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
+
+      return {
 
       nextState = {
         ...state,
@@ -77,10 +83,23 @@ const reducer = (state, action) => {
         itemCount: state.itemCount > 0 ? state.itemCount - quantity : 0,
       }
 
-      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
-      return nextState
-
     case 'RESET_CART':
+      localStorage.removeItem('KenzieCart', JSON.stringify(nextCart))
+      return { ...initialState }
+
+    case 'INIT_SAVED_CART':
+      nextCart = action.payload
+      let nextItemCount = nextCart.length
+      
+      return { 
+          ...state,
+          cart: nextCart,
+          itemCount: nextItemCount, 
+          cartTotal: calculateCartTotal(nextCart),
+      }
+
+    case 'APPLY_COUPON_CODE':
+
       localStorage.removeItem('KenzieCart', JSON.stringify(initialState))
       return { ...initialState }
 
@@ -154,6 +173,7 @@ const useProvideCart = () => {
   // Check for saved local cart on load and dispatch to set initial state
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('KenzieCart')) || false
+
     if (savedCart) {
       dispatch({
         type: 'INIT_SAVED_CART',
