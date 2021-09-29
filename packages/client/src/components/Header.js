@@ -9,6 +9,7 @@ export default function Header() {
   const { openSidebar } = useUI()
   const { state } = useProvideCart()
 
+
   return (
     <>
       <CartSidebar />
