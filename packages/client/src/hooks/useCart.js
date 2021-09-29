@@ -49,6 +49,9 @@ const reducer = (state, action) => {
         cartTotal: calculateCartTotal(nextCart)
       }
 
+      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
+      return nextState
+
     case 'REMOVE_ITEM':
       nextCart = nextCart
         .map((item) =>
@@ -73,6 +76,8 @@ const reducer = (state, action) => {
       localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
 
       return {
+
+      nextState = {
         ...state,
         cart: state.cart.filter((item) => item._id !== action.payload),
         itemCount: state.itemCount > 0 ? state.itemCount - quantity : 0,
@@ -95,6 +100,11 @@ const reducer = (state, action) => {
 
     case 'APPLY_COUPON_CODE':
 
+      localStorage.removeItem('KenzieCart', JSON.stringify(initialState))
+      return { ...initialState }
+
+    case 'INIT_SAVED_CART':
+      return { ...action.payload }
 
     default:
       return state
@@ -171,6 +181,10 @@ const useProvideCart = () => {
       })
     }
   }, [dispatch])
+
+    useEffect(() => {
+      console.log(state)
+    }, [state])
 
   return {
     state,
