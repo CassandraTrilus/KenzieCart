@@ -91,19 +91,13 @@ const reducer = (state, action) => {
         cartTotal: calculateCartTotal(nextCart) * (1 - state.discount),
       }
 
-    case 'REMOVE_ALL_ITEMS':
-      let quantity = state.cart.find((i) => i._id === action.payload).quantity
-      
-      localStorage.setItem('KenzieCart', JSON.stringify(nextCart))
-
+    case "REMOVE_ALL_ITEMS":
+      let quantity = state.cart.find((i) => i._id === action.payload).quantity;
       return {
-
-      nextState = {
         ...state,
         cart: state.cart.filter((item) => item._id !== action.payload),
         itemCount: state.itemCount > 0 ? state.itemCount - quantity : 0,
       }
-    }
 
     case 'RESET_CART':
       localStorage.removeItem('KenzieCart', JSON.stringify(nextCart))
