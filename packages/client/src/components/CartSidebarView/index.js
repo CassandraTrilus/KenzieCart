@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, InputGroup, FormControl } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { useUI } from 'hooks'
