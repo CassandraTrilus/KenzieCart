@@ -13,14 +13,17 @@ const initialState = {
 }
 export default function CheckoutPage(props) {
   const [data, setData] = useState(initialState)
-  const { state, resetCart, calculateCartTotal } = useProvideCart()
+  const { state, resetCart, deleteLocalStorage } = useProvideCart()
 
   const placeOrder = async (orderFormData) => {
     console.log('handlePlaceOrder', orderFormData)
     let orderData = {
       customerDetails: orderFormData,
       items: state.cart,
-      orderTotal: calculateCartTotal(state.cart),
+      orderTotal: state.cartTotal,
+      coupon: state.couponId,
+      couponCode: state.promoCode,
+      couponDiscount: state.discount
     }
     setData({
       ...data,
@@ -69,8 +72,8 @@ export default function CheckoutPage(props) {
           <CheckoutForm placeOrder={placeOrder} />
         ) : (
           <Container className='h-50'>
-            <div className='row justify-content-center'>
-              {data.isConfirmed && <p style={{fontSize: '26px', marginBottom: '30px', marginTop: '20px'}}>Your order is confirmed!</p>}
+          {data.isConfirmed ? (<div className='row justify-content-center'>
+          <p style={{fontSize: '26px', marginBottom: '30px', marginTop: '20px'}}>Your order is confirmed!</p>
 
               <div className='col-sm-12 d-flex justify-content-center'>
                 <p>You'll receive confirmation in your email shortly.</p>
@@ -79,6 +82,16 @@ export default function CheckoutPage(props) {
                 <Link to='/'>Continue shopping!</Link>
               </div>
             </div>
+            ) : ( 
+              <div className='row justify-content-center'>
+              <div className='col-sm-12 d-flex justify-content-center'>
+                <p>Your cart is currently empty.</p>
+              </div>
+              <div className='col-sm-12 d-flex justify-content-center'>
+                <Link to='/'>Continue shopping!</Link>
+              </div>
+            </div>
+            )}
           </Container>
         )}
       </ErrorBoundary>

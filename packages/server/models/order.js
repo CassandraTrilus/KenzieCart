@@ -3,6 +3,16 @@ const { ObjectId } = mongoose.Schema.Types
 
 const orderSchema = new mongoose.Schema(
   {
+    coupon: {
+      type: ObjectId,
+      ref: "Coupon",
+    },
+    couponCode: {
+      type: String,
+    },
+    couponDiscount: {
+      type: Number,
+    },
     customerName: {
       type: String,
       required: true,

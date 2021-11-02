@@ -19,7 +19,10 @@ router
       customerDetails: { firstName, lastName, email, address1, address2 },
       items,
       orderTotal,
+      couponCode,
+      couponDiscount,
     } = req.body
+
     const itemIdList = items.map((i) => i._id)
     const orderData = {
       customerName: `${firstName} ${lastName}`,
@@ -28,11 +31,10 @@ router
       customerAddress2: address2,
       items: itemIdList,
       orderTotal: orderTotal,
+      couponCode: couponCode,
+      couponDiscount: couponDiscount,
     }
     try {
-      /* create new order using Order model
-        and return order ID
-      */
       const savedOrder = await new Order(orderData)
       savedOrder.save()
       res.json(savedOrder._id)

@@ -4,8 +4,16 @@ const initialState = {
   cart: [],
   itemCount: 0,
   cartTotal: 0,
-  couponCode: '',
-  discount: 0
+  promoCode: "",
+  discount: 0,
+  couponId: "",
+}
+
+const calculateCartQuantity = (cartItems) => {
+  let totalQuantity = cartItems.reduce((accumulator, product) => {
+    return accumulator + product.quantity
+  }, 0)
+  return totalQuantity
 }
 
 const calculateCartTotal = (cartItems) => {
@@ -46,11 +54,24 @@ const reducer = (state, action) => {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount + numItemsToAdd,
-        cartTotal: calculateCartTotal(nextCart)
+        cartTotal: calculateCartTotal(nextCart) * (1 - state.discount),
+      };
+
+    case "APPLY_PROMO_CODE":
+      const preDiscountedTotal = calculateCartTotal(nextCart);
+      const discountedTotal =
+        preDiscountedTotal * (1 - action.payload.discount);
+      return {
+        ...state,
+        cartTotal: discountedTotal,
+        promoCode: action.payload.code,
+        discount: action.payload.discount,
+        couponId: action.payload._id
       }
 
-      localStorage.setItem('KenzieCart', JSON.stringify(nextState))
-      return nextState
+    case "DELETE_CART_STORAGE":
+      localStorage.removeItem('KenzieCart')
+      return { ...initialState }
 
     case 'REMOVE_ITEM':
       nextCart = nextCart
@@ -67,7 +88,7 @@ const reducer = (state, action) => {
         ...state,
         cart: nextCart,
         itemCount: state.itemCount > 0 ? state.itemCount - 1 : 0,
-        cartTotal: calculateCartTotal(nextCart),
+        cartTotal: calculateCartTotal(nextCart) * (1 - state.discount),
       }
 
     case 'REMOVE_ALL_ITEMS':
@@ -82,6 +103,7 @@ const reducer = (state, action) => {
         cart: state.cart.filter((item) => item._id !== action.payload),
         itemCount: state.itemCount > 0 ? state.itemCount - quantity : 0,
       }
+    }
 
     case 'RESET_CART':
       localStorage.removeItem('KenzieCart', JSON.stringify(nextCart))
@@ -146,6 +168,19 @@ const useProvideCart = () => {
     })
   }
 
+  const applyCoupon = (promoData) => {
+    dispatch({
+      type: "APPLY_PROMO_CODE",
+      payload: promoData,
+    })
+  }
+
+  const deleteLocalStorage = () => {
+    dispatch({
+      type: "DELETE_CART_STORAGE",
+    });
+  };
+
   const removeItem = (id) => {
     dispatch({
       type: 'REMOVE_ITEM',
@@ -165,6 +200,12 @@ const useProvideCart = () => {
       type: 'RESET_CART',
     })
   }
+
+  const updateCart = () => {
+    dispatch({
+      type: "UPDATE_CART_LOCAL_STORAGE",
+    });
+  };
 
   const isItemInCart = (id) => {
     return !!state.cart.find((item) => item._id === id)
@@ -192,8 +233,11 @@ const useProvideCart = () => {
     removeItem,
     removeAllItems,
     resetCart,
+    updateCart,
     isItemInCart,
     calculateCartTotal,
+    deleteLocalStorage,
+    applyCoupon,
   }
 }
 
