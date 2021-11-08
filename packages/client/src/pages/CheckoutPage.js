@@ -13,10 +13,10 @@ const initialState = {
 }
 export default function CheckoutPage(props) {
   const [data, setData] = useState(initialState)
+  const [confirmationNumber, setConfirmationNumber] = useState('')
   const { state, resetCart, deleteLocalStorage } = useProvideCart()
 
   const placeOrder = async (orderFormData) => {
-    console.log('handlePlaceOrder', orderFormData)
     let orderData = {
       customerDetails: orderFormData,
       items: state.cart,
@@ -32,14 +32,16 @@ export default function CheckoutPage(props) {
     })
     try {
       const orderConfirmation = await createOrder(orderData)
-      console.log(orderConfirmation)
-      toast(`Order #${orderConfirmation.data} Placed Successfully`)
+      toast('Order Placed Successfully')
       resetCart()
+      deleteLocalStorage()
       setData({
         isSubmitting: false,
         isConfirmed: true,
         errorMessage: null,
       })
+      setConfirmationNumber(orderConfirmation.data)
+
     } catch (error) {
       setData({
         ...data,
@@ -72,9 +74,11 @@ export default function CheckoutPage(props) {
           <CheckoutForm placeOrder={placeOrder} />
         ) : (
           <Container className='h-50'>
-          {data.isConfirmed ? (<div className='row justify-content-center'>
-          <p style={{fontSize: '26px', marginBottom: '30px', marginTop: '20px'}}>Your order is confirmed!</p>
-
+            {data.isConfirmed ? (<div className='row justify-content-center'>
+               <p style={{fontSize: '26px', marginBottom: '30px', marginTop: '20px'}}>Your order is confirmed!</p>
+              <div className='col-sm-12 d-flex justify-content-center'>
+                {confirmationNumber && <p>Order confirmation number: {confirmationNumber}</p>}
+              </div>
               <div className='col-sm-12 d-flex justify-content-center'>
                 <p>You'll receive confirmation in your email shortly.</p>
               </div>

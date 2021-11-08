@@ -1,14 +1,15 @@
 {
-  "name": "se-mern-ecommerce-app",
+  "name": "KenzieCart",
   "version": "1.0.0",
-  "repository": "https://github.com/KenzieAcademy/se-mern-ecommerce-app.git",
+  "repository": "https://https://github.com/CassandraTrilus/KenzieCart.git",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
     "concurrently": "^5.3.0",
-    "mongoose": "^5.13.2"
+    "mongoose": "^5.13.2",
+    "sass": "^1.43.4"
   },
   "scripts": {
     "client": "yarn workspace client start",

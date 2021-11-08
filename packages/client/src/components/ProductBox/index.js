@@ -1,26 +1,30 @@
 import React from 'react'
+import { useEffect } from 'react'
 import { Container, Button, Image, Figure } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingBag } from '@fortawesome/free-solid-svg-icons/faShoppingBag'
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
-import { useUI, useProvideCart } from 'hooks'
+import { useUI, useProvideCart, useCurrency } from 'hooks'
 import './ProductBox.scss'
 
 export default function ProductBox({ product }) {
   const { openSidebar } = useUI()
-  const { addItem, removeItem, isItemInCart } = useProvideCart()
+  const { addItem, removeItem, isItemInCart, updateCart } = useProvideCart()
+  const { getPrice, currencyState } = useCurrency()
 
   const handleAddToCart = () => {
-    console.log(product)
-
     openSidebar()
     addItem({ ...product, quantity: 1 })
+    updateCart()
   }
 
   const handleRemoveFromCart = () => {
     removeItem(product._id)
+    updateCart()
   }
 
+  useEffect(() => getPrice(), [currencyState]);
+  
   return (
     <Container className='p-sm-2 p-md-4'>
       <div className='row justify-content-center mb-2'>
@@ -36,7 +40,7 @@ export default function ProductBox({ product }) {
             </div>
             <div className='col-6 align-self-center text-right mb-2'>
               <div className='text-secondary'>
-                <h3>$ {product.price}</h3>
+                <h3>{getPrice(product.price)}</h3>
               </div>
             </div>
             <div className='col-12 align-self-center mb-3'>

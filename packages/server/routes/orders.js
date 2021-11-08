@@ -34,11 +34,16 @@ router
       couponCode: couponCode,
       couponDiscount: couponDiscount,
     }
-    try {
-      const savedOrder = await new Order(orderData)
-      savedOrder.save()
-      res.json(savedOrder._id)
 
+    const newOrder = new Order(orderData)
+
+    try {
+      await newOrder.save();
+      /* create new order using Order model
+        and return order ID
+      */
+
+      res.json(newOrder['_id'])
     } catch (error) {
       next(new Error('Error Placing Order'))
     }

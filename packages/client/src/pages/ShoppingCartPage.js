@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 
 export default function ShoppingCartPage() {
-  const { state, addItem, removeItem } = useProvideCart()
+  const { state, addItem, removeItem, updateCart } = useProvideCart()
 
   return (
     <Container fluid style={{ height: 'calc(100vh - 72px)' }}>
@@ -24,6 +24,7 @@ export default function ShoppingCartPage() {
                     close={null}
                     addItem={addItem}
                     removeItem={removeItem}
+                    updateCart={updateCart}
                   />
                 </div>
               ) : (

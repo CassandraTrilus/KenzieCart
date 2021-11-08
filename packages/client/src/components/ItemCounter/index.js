@@ -6,7 +6,7 @@ import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import './ItemCounter.scss'
 
 const ItemCounter = ({ item }) => {
-  const { addItem, removeItem } = useProvideCart()
+  const { addItem, removeItem, updateCart } = useProvideCart()
 
   const [quantity, setQuantity] = useState(item.quantity)
   const [pending, setPending] = useState(false)
@@ -14,6 +14,7 @@ const ItemCounter = ({ item }) => {
   const updateQuantity = async (quantity) => {
     let numItemsToAdd = quantity - item.quantity;
     addItem({ ...item, quantity: numItemsToAdd })
+    updateCart()
   }
 
   // After they type into the quantity field, the value is pending until the field blurs
@@ -21,6 +22,7 @@ const ItemCounter = ({ item }) => {
   const handleQuantity = (e) => {
     setQuantity(e.target.value)
     setPending(true)
+    updateCart()
   }
   const handleBlur = () => {
     let val = Number(quantity);
@@ -53,6 +55,7 @@ const ItemCounter = ({ item }) => {
     if (!pending) {
       if (item.quantity !== Number(quantity)) {
         setQuantity(item.quantity)
+        updateCart()
       }
     }
   }, [item, quantity, pending])

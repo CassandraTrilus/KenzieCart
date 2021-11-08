@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, InputGroup, FormControl } from 'react-bootstrap'
+import { Button, InputGroup, FormControl} from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { useUI } from 'hooks'
@@ -42,6 +42,7 @@ const CartSidebarView = () => {
           <p>Your shopping cart is empty</p>
         </div>
       )}
+      
 
       {state.cart.length > 0 && (
         <div className='cart-checkout'>
